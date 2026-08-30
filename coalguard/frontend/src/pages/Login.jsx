@@ -1,0 +1,65 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../lib/api';
+
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      localStorage.setItem('token', res.data.access_token);
+      
+      if(email.includes('corporate')) {
+        navigate('/corporate');
+      } else if (email.includes('manager')) {
+        navigate('/mine/c0000000-0000-0000-0000-000000000000');
+      } else {
+        navigate('/inspect');
+      }
+    } catch (err) {
+      setError('Invalid credentials');
+    }
+  };
+
+  return (
+    <div className="auth-wrapper">
+      <div className="auth-card">
+        <h2 className="text-3xl text-center mb-6" style={{ color: 'var(--primary)' }}>CoalGuard</h2>
+        {error && <div className="status-badge status-red mb-4 text-center" style={{ width: '100%' }}>{error}</div>}
+        
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label className="form-label">Email</label>
+            <input 
+              className="form-input" 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="inspector.c@demo.com" 
+              required
+            />
+          </div>
+          <div className="form-group mb-6">
+            <label className="form-label">Password</label>
+            <input 
+              className="form-input" 
+              type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="demo123" 
+              required
+            />
+          </div>
+          <button className="btn-primary" type="submit">
+            Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
