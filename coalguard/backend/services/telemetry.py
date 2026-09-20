@@ -4,6 +4,8 @@ from collections import deque
 from datetime import datetime, timezone
 from typing import Any
 
+from services.tickets import ticket_service
+
 
 FAULT_TYPES = {
     "bearing-thermal-surge",
@@ -77,10 +79,18 @@ class TelemetrySimulator:
             raise ValueError(f"Unsupported fault type: {fault_type}")
         if enabled:
             self.faults.add(fault_type)
+            ticket, created = ticket_service.create_ticket(
+                title=self._fault_title(fault_type),
+                description=self._fault_description(fault_type),
+                source=f"telemetry:{fault_type}",
+                severity="critical" if fault_type != "bearing-thermal-surge" else "high",
+            )
         else:
             self.faults.discard(fault_type)
         state = self.fault_state()
         await self._publish({"type": "fault_state", "faults": state})
+        if enabled and created:
+            await self._publish({"type": "ticket_created", "ticket": ticket})
         return state
 
     def fault_state(self) -> dict[str, bool]:
@@ -165,6 +175,22 @@ class TelemetrySimulator:
     @staticmethod
     def _bounded(value: float, lower: float, upper: float) -> float:
         return max(lower, min(upper, value))
+
+    @staticmethod
+    def _fault_title(fault_type: str) -> str:
+        return {
+            "bearing-thermal-surge": "Bearing thermal surge requires inspection",
+            "methane-leak": "Methane leak response required",
+            "worker-zone-intrusion": "Restricted worker-zone intrusion",
+        }[fault_type]
+
+    @staticmethod
+    def _fault_description(fault_type: str) -> str:
+        return {
+            "bearing-thermal-surge": "Bearing temperature and vibration crossed the maintenance threshold.",
+            "methane-leak": "Methane concentration crossed the simulated statutory alarm threshold.",
+            "worker-zone-intrusion": "A worker presence was detected in a restricted equipment zone.",
+        }[fault_type]
 
 
 telemetry_simulator = TelemetrySimulator()

@@ -5,6 +5,7 @@ import MineDashboard from './pages/MineDashboard';
 import Inspect from './pages/Inspect';
 import GISMap from './pages/Map';
 import TelemetryDashboard from './pages/TelemetryDashboard';
+import Tickets from './pages/Tickets';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/inspect" element={<Inspect />} />
         <Route path="/map" element={<GISMap />} />
         <Route path="/telemetry" element={<TelemetryDashboard />} />
+        <Route path="/tickets" element={<Tickets />} />
       </Routes>
     </Router>
   );

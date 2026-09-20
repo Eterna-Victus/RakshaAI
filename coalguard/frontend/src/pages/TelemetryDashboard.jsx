@@ -137,6 +137,7 @@ export default function TelemetryDashboard() {
         <span className={`connection-pill connection-${connection}`}>
           <span className="connection-dot" /> {connection === 'live' ? 'Live stream' : connection}
         </span>
+        <a href="/tickets" className="btn-primary telemetry-tickets-link">Maintenance queue</a>
       </div>
 
       {error && <div className="inline-error" role="alert">{error}</div>}
