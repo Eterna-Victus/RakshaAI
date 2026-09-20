@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, inspections, actions, compliance, dashboard, admin, telemetry, ml, tickets, cv_incidents, dgms, rca, ai, digital_twin
+from routes import auth, inspections, actions, compliance, dashboard, admin, telemetry, ml, tickets, cv_incidents, dgms, rca, ai, digital_twin, sync
 from services.telemetry import telemetry_simulator
 
 
@@ -36,6 +36,7 @@ app.include_router(dgms.router)
 app.include_router(rca.router)
 app.include_router(ai.router)
 app.include_router(digital_twin.router)
+app.include_router(sync.router)
 
 
 @app.websocket("/ws/telemetry")
