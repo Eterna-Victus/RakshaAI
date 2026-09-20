@@ -1,4 +1,3 @@
-import subprocess
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -19,6 +18,6 @@ class RulRequest(BaseModel):
 def predict_remaining_useful_life(request: RulRequest):
     try:
         prediction = predict_rul(request.sensor_values)
-    except (OSError, subprocess.SubprocessError, ValueError) as error:
+    except (ImportError, OSError, ValueError) as error:
         raise HTTPException(status_code=503, detail=f"RUL engine unavailable: {error}") from error
     return {"asset_id": request.asset_id, **prediction}
