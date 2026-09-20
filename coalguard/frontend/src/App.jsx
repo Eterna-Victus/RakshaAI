@@ -7,6 +7,7 @@ import GISMap from './pages/Map';
 import TelemetryDashboard from './pages/TelemetryDashboard';
 import Tickets from './pages/Tickets';
 import Compliance from './pages/Compliance';
+import SafetyIntelligence from './pages/SafetyIntelligence';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/telemetry" element={<TelemetryDashboard />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/compliance" element={<Compliance />} />
+        <Route path="/safety-intelligence" element={<SafetyIntelligence />} />
       </Routes>
     </Router>
   );
