@@ -34,6 +34,7 @@ export default function TelemetryDashboard() {
   const [faults, setFaults] = useState({});
   const [rul, setRul] = useState(null);
   const [rulHistory, setRulHistory] = useState([]);
+  const [cvIncidents, setCvIncidents] = useState([]);
   const [connection, setConnection] = useState('connecting');
   const [error, setError] = useState('');
 
@@ -70,6 +71,8 @@ export default function TelemetryDashboard() {
         setAsset(current);
         setFaults(snapshotResponse.data.faults || {});
         setHistory(historyResponse.data.items.map(toChartPoint).filter(Boolean));
+        const incidentResponse = await api.get('/api/alerts/cv-incidents');
+        setCvIncidents(incidentResponse.data.items || []);
         await loadPrediction(current);
       } catch {
         if (!cancelled) setError('Telemetry API is unavailable. Start the backend to enable live data.');
@@ -86,6 +89,10 @@ export default function TelemetryDashboard() {
         if (cancelled) return;
         if (event.type === 'fault_state') {
           setFaults(event.faults || {});
+          return;
+        }
+        if (event.type === 'cv_incident') {
+          setCvIncidents((items) => [event.incident, ...items.filter((item) => item.id !== event.incident.id)].slice(0, 6));
           return;
         }
         const current = event.assets?.find((item) => item.asset_id === assetId) || event.assets?.[0];
@@ -236,6 +243,33 @@ export default function TelemetryDashboard() {
               </div>
             ))}
             {!rul && <p className="text-muted">Waiting for the first prediction.</p>}
+          </div>
+        </div>
+      </section>
+
+      <section className="card cv-panel">
+        <div className="flex-between mb-4">
+          <div>
+            <p className="text-muted">Khaan Netra vision bridge</p>
+            <h2 className="text-xl">Live safety incidents</h2>
+          </div>
+          <a href="/khaan-netra/index.html" target="_blank" rel="noreferrer" className="btn-primary cv-open-link">Open camera</a>
+        </div>
+        <div className="cv-layout">
+          <div className="camera-frame">
+            <div className="camera-grid" />
+            <span className="camera-label">EDGE CAMERA / GALLERY B</span>
+            {cvIncidents[0]?.detections?.[0]?.bbox && <div className="detection-box" style={{ left: `${Math.min(80, cvIncidents[0].detections[0].bbox[0] / 4)}%`, top: `${Math.min(65, cvIncidents[0].detections[0].bbox[1] / 4)}%` }}><span>{cvIncidents[0].detections[0].incident_type} {Math.round(cvIncidents[0].detections[0].confidence * 100)}%</span></div>}
+            {!cvIncidents.length && <p className="camera-empty">Waiting for a CV incident snapshot...</p>}
+          </div>
+          <div className="cv-incident-list">
+            {cvIncidents.length ? cvIncidents.map((incident) => (
+              <div className="cv-incident" key={incident.id}>
+                <div className="flex-between"><strong>{incident.id}</strong><span className="status-badge status-red">OPEN</span></div>
+                <p>{incident.detections.map((detection) => `${detection.incident_type} (${Math.round(detection.confidence * 100)}%)`).join(', ')}</p>
+                <small>Worker {incident.worker_id} · {incident.asset_id}</small>
+              </div>
+            )) : <p className="text-muted">No incidents received.</p>}
           </div>
         </div>
       </section>

@@ -1,0 +1,47 @@
+from datetime import datetime, timezone
+from typing import Any
+from uuid import uuid4
+
+from services.tickets import ticket_service
+
+
+class CvIncidentService:
+    def __init__(self) -> None:
+        self._incidents: dict[str, dict[str, Any]] = {}
+
+    def list_incidents(self) -> list[dict[str, Any]]:
+        return sorted(self._incidents.values(), key=lambda item: item["captured_at"], reverse=True)
+
+    def create_incident(self, payload: dict[str, Any]) -> tuple[dict[str, Any], bool, dict[str, Any] | None]:
+        detections = payload.get("detections", [])
+        fingerprint = f"{payload.get('worker_id')}:{payload.get('asset_id')}:{detections[0].get('incident_type') if detections else 'UNKNOWN'}"
+        for incident in self._incidents.values():
+            if incident["fingerprint"] == fingerprint and incident["status"] == "OPEN":
+                return incident, False, None
+
+        now = datetime.now(timezone.utc).isoformat()
+        incident = {
+            "id": f"CVI-{uuid4().hex[:8].upper()}",
+            "fingerprint": fingerprint,
+            "worker_id": payload.get("worker_id", "unidentified-worker"),
+            "mine_id": payload.get("mine_id", "demo-mine"),
+            "asset_id": payload.get("asset_id", "conveyor-07"),
+            "captured_at": payload.get("captured_at", now),
+            "received_at": now,
+            "source": payload.get("source", "khaan-netra-bridge"),
+            "snapshot": payload.get("snapshot"),
+            "detections": detections,
+            "status": "OPEN",
+        }
+        self._incidents[incident["id"]] = incident
+        labels = ", ".join(item["incident_type"] for item in detections) or "UNCLASSIFIED CV EVENT"
+        ticket, _ = ticket_service.create_ticket(
+            title=f"Computer vision incident: {labels}",
+            description=f"Worker {incident['worker_id']} requires safety review near {incident['asset_id']}.",
+            source=f"cv:{incident['id']}",
+            severity="critical",
+        )
+        return incident, True, ticket
+
+
+cv_incident_service = CvIncidentService()

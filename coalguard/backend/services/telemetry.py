@@ -172,6 +172,9 @@ class TelemetrySimulator:
                 except asyncio.QueueEmpty:
                     pass
 
+    async def publish_external(self, event: dict[str, Any]) -> None:
+        await self._publish(event)
+
     @staticmethod
     def _bounded(value: float, lower: float, upper: float) -> float:
         return max(lower, min(upper, value))
