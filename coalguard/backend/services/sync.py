@@ -25,6 +25,18 @@ class SyncService:
         if temp_uuid in self._accepted:
             return {"ok": True, "duplicate": True, **self._accepted[temp_uuid]}
 
+        from models import SyncReceipt
+        from models.database import SessionLocal
+        db = SessionLocal()
+        try:
+            persisted = db.query(SyncReceipt).filter(SyncReceipt.temp_uuid == temp_uuid).first()
+            if persisted:
+                result = persisted.result or {}
+                self._accepted[temp_uuid] = result
+                return {"ok": True, "duplicate": True, **result}
+        finally:
+            db.close()
+
         item_type = item.get("type", "inspection")
         if item_type == "cv_incident":
             incident, created, ticket = cv_incident_service.create_incident(item)
@@ -33,8 +45,6 @@ class SyncService:
             result = {"server_id": f"INS-{uuid4().hex[:8].upper()}", "entity": "inspection", "created": True}
         result["synced_at"] = datetime.now(timezone.utc).isoformat()
         self._accepted[temp_uuid] = result
-        from models import SyncReceipt
-        from models.database import SessionLocal
         db = SessionLocal()
         try:
             db.add(SyncReceipt(temp_uuid=temp_uuid, entity=result["entity"], server_id=result["server_id"], result=result))

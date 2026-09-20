@@ -26,12 +26,12 @@ Terminal 2, React dashboard:
 ```powershell
 cd coalguard/frontend
 npm install
-npx vite --host=127.0.0.1 --port=4173
+npm run dev
 ```
 
 Open `http://127.0.0.1:4173/`. Demo credentials use password `demo123`; seeded user emails are in `coalguard/backend/scripts/seed_reset.py`.
 
-Terminal 3, Khaan Netra camera PWA:
+Terminal 3, Khaan Netra camera PWA (needed for live camera development):
 
 ```powershell
 cd khaan-netra
@@ -39,6 +39,16 @@ python -m http.server 8080
 ```
 
 Open `http://127.0.0.1:8080/`. The React Vite proxy forwards `/khaan-netra/*` to this server when both servers are running.
+
+For a self-contained production demo, build the dashboard instead:
+
+```powershell
+cd coalguard/frontend
+npm run build
+npm run preview
+```
+
+The build copies Khaan Netra to `dist/khaan-netra`, so the dashboard link works without Terminal 3. When Khaan Netra is opened directly on port 8080, its CV and offline-sync bridge targets the FastAPI server on port 8000. Set `window.KHAAN_API_URL` before loading it to use another backend URL.
 
 ## Demo Flow
 
@@ -65,6 +75,8 @@ cd ../../
 node --check khaan-netra/js/app.js
 node --check khaan-netra/js/api-bridge.js
 node --check khaan-netra/js/sync-queue.js
+node --check khaan-netra/js/cv-scanner.js
+python -m unittest discover -s coalguard/backend/tests -v
 ```
 
 ## Demo Limitations

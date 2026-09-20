@@ -4,7 +4,7 @@ function makeSyncId(prefix = 'cv') {
 }
 
 async function sendCvIncident(payload, apiUrl = '') {
-  apiUrl = apiUrl || window.KHAAN_API_URL || window.location.origin;
+  apiUrl = apiUrl || window.KHAAN_API_URL || (window.location.port === '8080' ? 'http://127.0.0.1:8000' : '');
   const item = { ...payload, type: 'cv_incident', temp_uuid: payload.temp_uuid || makeSyncId() };
   try {
     const response = await fetch(`${apiUrl}/api/alerts/cv-incident`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(item) });

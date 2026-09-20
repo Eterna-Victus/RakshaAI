@@ -17,7 +17,7 @@ function removeSynced(tempUuid) {
 }
 
 async function replaySyncQueue(apiUrl = '') {
-  apiUrl = apiUrl || window.KHAAN_API_URL || window.location.origin;
+  apiUrl = apiUrl || window.KHAAN_API_URL || (window.location.port === '8080' ? 'http://127.0.0.1:8000' : '');
   const queue = getSyncQueue();
   if (!queue.length) return 0;
   try {

@@ -20,6 +20,10 @@ INCIDENT_CLASSES = {
     "illegal-riding": "ILLEGAL_RIDING",
     "equipment-zone-crossing": "EQUIPMENT_ZONE_CROSSING",
     "crossing-equipment": "EQUIPMENT_ZONE_CROSSING",
+    "missing_helmet": "NO_HELMET",
+    "missing_vest": "NO_VEST",
+    "missing_safety_vest": "NO_VEST",
+    "missing_mask": "NO_MASK",
 }
 
 

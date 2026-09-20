@@ -214,7 +214,10 @@ async function _waitForScan() {
         worker_id: result.workerId,
         captured_at: new Date(result.timestamp).toISOString(),
         snapshot: result.snapshot,
-        detections: (result.missingEssential || []).map(item => ({ incident_type: `missing_${item.toLowerCase().replace(/\s+/g, '_')}` })),
+        detections: (result.missingEssential || []).map(item => ({
+          incident_type: `missing_${item.toLowerCase().replace(/\s+/g, '_')}`,
+          confidence: 1,
+        })),
         source: `khaan-netra:${identity.source}`,
       });
     }

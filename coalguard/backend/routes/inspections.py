@@ -19,8 +19,8 @@ def create_inspection(
     if existing:
         return existing
         
-    if payload.severity == "High" and not payload.photo_url:
-        raise HTTPException(status_code=422, detail="Photo required for high severity")
+    if payload.severity in {"High", "Critical"} and not payload.photo_url:
+        raise HTTPException(status_code=422, detail="Photo required for high or critical severity")
         
     if not payload.gps_lat or not payload.gps_lon:
         raise HTTPException(status_code=422, detail="GPS coordinates required")

@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from services.cv_incidents import cv_incident_service
@@ -27,7 +27,10 @@ def list_cv_incidents():
 
 @router.post("/cv-incident")
 async def create_cv_incident(payload: CvIncidentRequest):
-    incident, created, ticket = cv_incident_service.create_incident(payload.model_dump())
+    try:
+        incident, created, ticket = cv_incident_service.create_incident(payload.model_dump())
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
     if created:
         await telemetry_simulator.publish_external({"type": "cv_incident", "incident": incident, "ticket": ticket})
     return {"incident": incident, "created": created, "ticket": ticket}
