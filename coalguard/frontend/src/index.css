@@ -277,6 +277,26 @@ body {
 .assistant-citation { display: grid; gap: 0.25rem; padding: 0.65rem; border-left: 3px solid #0f766e; background: #f0fdfa; }
 .assistant-citation strong { color: #115e59; font-size: 0.78rem; }
 .assistant-citation span { color: #475569; font-size: 0.75rem; line-height: 1.35; }
+.twin-heading { align-items: flex-start; }
+.twin-back-link { width: auto; text-decoration: none; white-space: nowrap; }
+.twin-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.5fr); gap: 1.5rem; }
+.twin-map-card { min-width: 0; }
+.twin-legend { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1rem; color: var(--text-muted); font-size: 0.72rem; }
+.twin-legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+.legend-dot, .worker-dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; }
+.legend-green { background: #10b981; }.legend-yellow { background: #f59e0b; }.legend-red { background: #ef4444; }.worker-dot { background: #38bdf8; box-shadow: 0 0 0 3px #e0f2fe; }
+.twin-map { position: relative; height: min(620px, 62vw); min-height: 400px; overflow: hidden; border: 1px solid #334155; border-radius: 8px; background: #0f172a; background-image: linear-gradient(rgba(148,163,184,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.08) 1px, transparent 1px); background-size: 36px 36px; }
+.twin-zone { position: absolute; border: 2px solid #10b981; border-radius: 10px; background: rgba(16,185,129,.1); }
+.zone-yellow { border-color: #f59e0b; background: rgba(245,158,11,.1); }.zone-red { border-color: #ef4444; background: rgba(239,68,68,.13); }
+.twin-zone > span { position: absolute; top: 0.5rem; left: 0.6rem; color: #cbd5e1; font-size: 0.7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.twin-asset { position: absolute; z-index: 2; display: grid; gap: 0.15rem; transform: translate(-50%, -50%); border: 0; background: transparent; color: white; cursor: pointer; text-align: center; }
+.asset-icon { position: relative; display: grid; place-items: center; width: 2rem; height: 2rem; margin: auto; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 5px rgba(16,185,129,.2); }
+.asset-yellow .asset-icon { background: #f59e0b; box-shadow: 0 0 0 5px rgba(245,158,11,.2); }.asset-red .asset-icon { background: #ef4444; box-shadow: 0 0 0 5px rgba(239,68,68,.2); }.asset-selected .asset-icon { outline: 2px solid white; outline-offset: 3px; }
+.asset-pulse { position: absolute; inset: 0; margin: auto; width: 2rem; height: 2rem; border-radius: 50%; background: currentColor; opacity: .22; animation: twin-pulse 1.8s infinite; }
+.twin-asset small, .twin-worker small { white-space: nowrap; color: #e2e8f0; font-size: 0.66rem; }
+.twin-worker { position: absolute; z-index: 3; display: grid; gap: .2rem; transform: translate(-50%, -50%); color: #38bdf8; text-align: center; }.twin-worker span { font-size: 1.4rem; }.twin-loading { display: grid; place-items: center; height: 100%; color: #94a3b8; }
+.twin-side { display: grid; align-content: start; gap: 1rem; }.twin-empty { margin-top: 1rem; text-transform: none; letter-spacing: 0; }.twin-values { display: grid; gap: .45rem; margin: 1rem 0; }.twin-values div, .worker-list div { display: flex; justify-content: space-between; gap: .5rem; padding: .55rem 0; border-bottom: 1px solid var(--border-color); }.twin-values span, .worker-list small { color: var(--text-muted); font-size: .75rem; }.twin-values strong { font-size: .82rem; }.worker-list { display: grid; gap: .2rem; margin-top: .7rem; }.worker-list div { align-items: center; flex-wrap: wrap; }.worker-list .worker-dot { margin-right: .25rem; }.worker-list strong { margin-right: auto; font-size: .82rem; }
+@keyframes twin-pulse { 0%, 100% { transform: scale(1); opacity: .22; } 50% { transform: scale(1.7); opacity: 0; } }
 .telemetry-tickets-link, .tickets-back-link { width: auto; text-decoration: none; white-space: nowrap; }
 .ticket-board { display: grid; grid-template-columns: repeat(5, minmax(190px, 1fr)); gap: 0.8rem; align-items: start; overflow-x: auto; }
 .ticket-column { min-height: 420px; border: 1px solid var(--border-color); border-radius: 10px; background: #f8fafc; }
@@ -309,4 +329,7 @@ body {
   .form-switcher { flex-direction: column; }
   .intelligence-heading { gap: 1rem; flex-direction: column; }
   .intelligence-grid { grid-template-columns: 1fr; }
+  .twin-heading { gap: 1rem; flex-direction: column; }
+  .twin-layout { grid-template-columns: 1fr; }
+  .twin-map { height: 70vw; min-height: 360px; }
 }

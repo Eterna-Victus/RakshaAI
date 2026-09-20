@@ -147,6 +147,7 @@ export default function TelemetryDashboard() {
         <a href="/tickets" className="btn-primary telemetry-tickets-link">Maintenance queue</a>
         <a href="/compliance" className="btn-primary telemetry-tickets-link">DGMS compliance</a>
         <a href="/safety-intelligence" className="btn-primary telemetry-tickets-link">RCA assistant</a>
+        <a href="/digital-twin" className="btn-primary telemetry-tickets-link">Digital twin</a>
       </div>
 
       {error && <div className="inline-error" role="alert">{error}</div>}

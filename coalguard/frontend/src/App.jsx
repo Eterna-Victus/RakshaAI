@@ -8,6 +8,7 @@ import TelemetryDashboard from './pages/TelemetryDashboard';
 import Tickets from './pages/Tickets';
 import Compliance from './pages/Compliance';
 import SafetyIntelligence from './pages/SafetyIntelligence';
+import DigitalTwin from './pages/DigitalTwin';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/safety-intelligence" element={<SafetyIntelligence />} />
+        <Route path="/digital-twin" element={<DigitalTwin />} />
       </Routes>
     </Router>
   );
