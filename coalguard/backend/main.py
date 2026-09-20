@@ -1,8 +1,18 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, inspections, actions, compliance, dashboard, admin
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="CoalGuard API")
+from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
+from routes import auth, inspections, actions, compliance, dashboard, admin, telemetry, ml
+from services.telemetry import telemetry_simulator
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    await telemetry_simulator.start()
+    yield
+    await telemetry_simulator.stop()
+
+app = FastAPI(title="CoalGuard API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,6 +28,13 @@ app.include_router(actions.router)
 app.include_router(compliance.router)
 app.include_router(dashboard.router)
 app.include_router(admin.router)
+app.include_router(telemetry.router)
+app.include_router(ml.router)
+
+
+@app.websocket("/ws/telemetry")
+async def telemetry_websocket(websocket: WebSocket):
+    await telemetry.telemetry_socket(websocket)
 
 @app.get("/health")
 def health_check():

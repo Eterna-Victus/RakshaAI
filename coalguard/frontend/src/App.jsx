@@ -4,6 +4,7 @@ import CorporateDashboard from './pages/CorporateDashboard';
 import MineDashboard from './pages/MineDashboard';
 import Inspect from './pages/Inspect';
 import GISMap from './pages/Map';
+import TelemetryDashboard from './pages/TelemetryDashboard';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/mine/:mineId" element={<MineDashboard />} />
         <Route path="/inspect" element={<Inspect />} />
         <Route path="/map" element={<GISMap />} />
+        <Route path="/telemetry" element={<TelemetryDashboard />} />
       </Routes>
     </Router>
   );
