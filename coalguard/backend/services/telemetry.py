@@ -50,6 +50,15 @@ class TelemetrySimulator:
         self._task: asyncio.Task[None] | None = None
         self._lock = asyncio.Lock()
 
+    def load_persisted(self, session_factory) -> None:
+        from models import TelemetryEvent
+        db = session_factory()
+        try:
+            rows = db.query(TelemetryEvent).order_by(TelemetryEvent.generated_at.desc()).limit(120).all()
+            self.history.extend({"type": "telemetry", "generated_at": row.generated_at.isoformat(), "assets": [row.payload], "faults": self.fault_state()} for row in reversed(rows))
+        finally:
+            db.close()
+
     async def start(self) -> None:
         if self._task is None or self._task.done():
             self._task = asyncio.create_task(self._run(), name="telemetry-simulator")
@@ -136,7 +145,20 @@ class TelemetrySimulator:
             event["assets"].append(payload)
 
         self.history.append(event)
+        self._persist_event(event)
         await self._publish(event)
+
+    @staticmethod
+    def _persist_event(event: dict[str, Any]) -> None:
+        from models import TelemetryEvent
+        from models.database import SessionLocal
+        db = SessionLocal()
+        try:
+            for asset in event["assets"]:
+                db.add(TelemetryEvent(asset_id=asset["asset_id"], generated_at=datetime.fromisoformat(event["generated_at"]), payload=asset))
+            db.commit()
+        finally:
+            db.close()
 
     def _asset_payload(self, asset: dict[str, Any]) -> dict[str, Any]:
         values = {key: round(value, 2) for key, value in asset["values"].items()}

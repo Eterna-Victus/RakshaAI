@@ -3,7 +3,8 @@ function makeSyncId(prefix = 'cv') {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-async function sendCvIncident(payload, apiUrl = 'http://localhost:8000') {
+async function sendCvIncident(payload, apiUrl = '') {
+  apiUrl = apiUrl || window.KHAAN_API_URL || window.location.origin;
   const item = { ...payload, type: 'cv_incident', temp_uuid: payload.temp_uuid || makeSyncId() };
   try {
     const response = await fetch(`${apiUrl}/api/alerts/cv-incident`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(item) });

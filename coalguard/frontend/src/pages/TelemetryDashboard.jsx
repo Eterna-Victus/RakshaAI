@@ -41,6 +41,8 @@ export default function TelemetryDashboard() {
   useEffect(() => {
     let socket;
     let cancelled = false;
+    let reconnectTimer;
+    let reconnectDelay = 1000;
 
     const loadPrediction = async (currentAsset) => {
       try {
@@ -80,12 +82,14 @@ export default function TelemetryDashboard() {
     };
 
     const connect = () => {
-      socket = new WebSocket(import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/telemetry');
+      const wsUrl = import.meta.env.VITE_WS_URL || `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/telemetry`;
+      socket = new WebSocket(wsUrl);
       socket.onopen = () => {
-        if (!cancelled) setConnection('live');
+        if (!cancelled) { setConnection('live'); reconnectDelay = 1000; }
       };
       socket.onmessage = (message) => {
-        const event = JSON.parse(message.data);
+        let event;
+        try { event = JSON.parse(message.data); } catch { return; }
         if (cancelled) return;
         if (event.type === 'fault_state') {
           setFaults(event.faults || {});
@@ -106,7 +110,7 @@ export default function TelemetryDashboard() {
         if (!cancelled) setConnection('offline');
       };
       socket.onclose = () => {
-        if (!cancelled) setConnection('offline');
+        if (!cancelled) { setConnection('offline'); reconnectTimer = window.setTimeout(connect, reconnectDelay); reconnectDelay = Math.min(reconnectDelay * 2, 10000); }
       };
     };
 
@@ -115,6 +119,7 @@ export default function TelemetryDashboard() {
     return () => {
       cancelled = true;
       socket?.close();
+      window.clearTimeout(reconnectTimer);
     };
   }, []);
 

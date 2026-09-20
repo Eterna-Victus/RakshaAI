@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getQueue, removeFromQueue, updateQueueItem } from './idb';
 
-const API_URL = 'http://localhost:8000'; // Default FastAPI URL
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 const api = axios.create({
   baseURL: API_URL,
