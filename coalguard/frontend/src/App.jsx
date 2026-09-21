@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import {
   Activity,
   Bell,
@@ -13,10 +14,10 @@ import {
   HardHat,
   Home,
   Layers3,
+  LogOut,
   MapPinned,
   ShieldAlert,
   ShieldCheck,
-  Wrench,
 } from 'lucide-react';
 import Login from './pages/Login';
 import CorporateDashboard from './pages/CorporateDashboard';
@@ -29,6 +30,7 @@ import Compliance from './pages/Compliance';
 import SafetyIntelligence from './pages/SafetyIntelligence';
 import DigitalTwin from './pages/DigitalTwin';
 import Landing from './pages/Landing';
+import { clearSession, getInitials, getRoleLabel, getSession } from './lib/auth';
 
 const navigation = [
   { label: 'Overview', to: '/corporate', icon: Home },
@@ -66,12 +68,30 @@ function getPageMeta(pathname) {
 
 function AppShell() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [session, setSession] = useState(getSession);
   const pageMeta = getPageMeta(location.pathname);
   const isLoginPage = location.pathname === '/login';
+  const isLandingPage = location.pathname === '/';
+
+  useEffect(() => {
+    const syncSession = () => setSession(getSession());
+    window.addEventListener('auth-changed', syncSession);
+    return () => window.removeEventListener('auth-changed', syncSession);
+  }, []);
 
   if (isLoginPage) {
     return <Login />;
   }
+
+  if (!session && !isLandingPage) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  const handleLogout = () => {
+    clearSession();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="app-shell">
@@ -148,13 +168,16 @@ function AppShell() {
               <Bell size={16} />
               <span className="badge-count">3</span>
             </button>
-            <div className="user-chip">
-              <div className="avatar">G</div>
+            {session ? <div className="user-chip">
+              <div className="avatar">{getInitials(session.name)}</div>
               <div>
-                <strong>Gajendra B.</strong>
-                <span>Mine Official</span>
+                <strong>{session.name}</strong>
+                <span>{getRoleLabel(session.role)}</span>
               </div>
-            </div>
+              <button className="icon-button" type="button" onClick={handleLogout} aria-label="Log out" title="Log out">
+                <LogOut size={16} />
+              </button>
+            </div> : <NavLink className="login-link" to="/login">Sign in</NavLink>}
           </div>
         </header>
 
