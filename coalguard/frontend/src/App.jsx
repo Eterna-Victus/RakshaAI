@@ -48,7 +48,7 @@ const navigation = [
 function getPageMeta(pathname) {
   const meta = {
     '/': { title: 'Mine Command Center', subtitle: 'Real-time monitoring • Compliance • Risk Intelligence' },
-    '/login': { title: 'CoalGuard', subtitle: 'Secure mine operations login' },
+    '/login': { title: 'RakshaAI', subtitle: 'Secure mine operations login' },
     '/corporate': { title: 'Mine Command Center', subtitle: 'Real-time monitoring • Compliance • Risk Intelligence' },
     '/telemetry': { title: 'Telemetry Overview', subtitle: 'Live asset health • sensor intelligence' },
     '/inspect': { title: 'Inspection Workflow', subtitle: 'Field evidence • inspections • corrective actions' },
@@ -101,7 +101,7 @@ function AppShell() {
             <ShieldCheck size={18} />
           </div>
           <div className="brand-copy">
-            <strong>CoalGuard</strong>
+            <strong>RakshaAI</strong>
             <span>Safe Mines • Smarter Governance</span>
           </div>
         </div>
