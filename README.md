@@ -1,12 +1,10 @@
+<<<<<<< HEAD
 # RakshaAI
 
 RakshaAI is a hackathon-ready mining safety and predictive-maintenance demo combining CoalGuard and Khaan Netra.
 
 ## Architecture
 
-- `coalguard/backend`: FastAPI, SQLite, WebSocket telemetry, RUL, tickets, CV incidents, DGMS reports, RCA, and offline sync APIs.
-- `coalguard/frontend`: React/Vite operations UI.
-- `khaan-netra`: standalone vanilla JavaScript PWA for local camera/PPE inference.
 
 The repository uses FastAPI rather than the Express paths described in the original feature brief. REST APIs are authoritative; WebSocket and offline clients degrade gracefully.
 
@@ -82,3 +80,21 @@ python -m unittest discover -s coalguard/backend/tests -v
 ## Demo Limitations
 
 Telemetry, platform records, sync receipts, and recent history persist in SQLite. The RUL and regulatory assistant use deterministic offline fallbacks so the demo does not require XGBoost, an external LLM, or cloud hardware. DGMS downloads contain a canonical SHA-256 report signature; this is demo evidence integrity, not a legally valid digital signature. Camera access requires localhost or HTTPS, and the supplied PPE model must be downloaded/cached before first offline inference.
+=======
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+>>>>>>> origin/main
